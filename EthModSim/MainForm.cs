@@ -47,7 +47,8 @@ namespace EthModSim
                 // Buffer to store the response bytes.
                 byte[] rxData = new Byte[8];
 
-                int rxLen = stream.Read(rxData, 0, rxData.Length);
+                int rxLen = stream.Read(rxData, 0, rxData.Length);              // 01 07 BF AD where 01 07 means the data received correctly and BF AD is CRC.
+
                 Output($"Rcvd: {HexConvert(rxData.Take(rxLen).ToArray())}");
             }
             catch (Exception ex)
@@ -58,12 +59,17 @@ namespace EthModSim
 
         private void Output(string message)
         {
-            tbStatus.Text += message + Environment.NewLine;
+            tbStatus.AppendText(message + Environment.NewLine);
         }
 
         private static string HexConvert(byte[] data)
         {
             return BitConverter.ToString(data).Replace("-", " ");
+        }
+
+        private void OnClear(object sender, EventArgs e)
+        {
+            tbStatus.Clear();
         }
     }
 }
