@@ -1,1 +1,1 @@
-# EthModSim
+# Ethernet Module Simulator
