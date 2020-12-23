@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net.Sockets;
 using System.Windows.Forms;
 
@@ -33,24 +32,20 @@ namespace EthModSim
                 NetworkStream stream = client.GetStream();
 
                 // Send the message to the connected MCP
+                // { 0xff, 0x06, 0x47, 0x69, 0x31, 0x2f, 0x30, 0x37, 0x0b, 0x44, 0x65, 0x6d, 0x6f, 0x2d, 0x53, 0x77, 0x69, 0x74, 0x63, 0x68 }
                 using (BuildByteArray bba = new BuildByteArray())
                 {
                     bba.Add(0xFF);
                     bba.AddWithLength(tbSwitchPort.Text);
                     bba.AddWithLength(tbSwitch.Text);
-                    byte[] txData = bba.ToArray();
-
-                    //byte[] txData = { 0xff, 0x06, 0x47, 0x69, 0x31, 0x2f, 0x30, 0x37, 0x0b, 0x44, 0x65, 0x6d, 0x6f, 0x2d, 0x53, 0x77, 0x69, 0x74, 0x63, 0x68 };
-                    stream.Write(txData, 0, txData.Length);
-                    Output($"Sent: {HexConvert(txData)}");
+                    stream.Write(bba.ToArray());
+                    Output($"Sent: {HexConvert(bba.ToArray())}");
                 }
 
-                // Buffer to store the response bytes.
-                byte[] rxData = new Byte[8];
-
-                int rxLen = stream.Read(rxData, 0, rxData.Length);              // 01 07 BF AD where 01 07 means the data received correctly and BF AD is CRC.
-
-                Output($"Rcvd: {HexConvert(rxData.Take(rxLen).ToArray())}");
+                // Buffer to store the response bytes. 01 07 BF AD where 01 07 means the data received correctly and BF AD is CRC.
+                Span<byte> rxData = stackalloc byte[8];
+                int rxLen = stream.Read(rxData);
+                Output($"Rcvd: {HexConvert(rxData.Slice(0, rxLen).ToArray())}");
             }
             catch (Exception ex)
             {
