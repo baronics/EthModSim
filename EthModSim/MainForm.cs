@@ -10,6 +10,7 @@ namespace EthModSim
         public MainForm()
         {
             InitializeComponent();
+            Icon = Properties.Resources.em;
         }
 
         private void OnSend(object sender, EventArgs e)
