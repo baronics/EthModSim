@@ -2,6 +2,9 @@
 using System.Net.Sockets;
 using System.Windows.Forms;
 
+/// <summary>
+/// Simulates the Ethernet Module
+/// </summary>
 namespace EthModSim
 {
     public partial class MainForm : Form
